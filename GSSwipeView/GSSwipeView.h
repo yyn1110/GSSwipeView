@@ -71,6 +71,12 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 - (void)GSSwipeViewTouchEnd:(GSSwipeView *)swipeView ;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
 - (void)GSSwipeView:(GSSwipeView *)swipeView recoverOriginal:(GSSwipeViewCell *)cell withIndex:(NSInteger )index;
+- (void)GSSwipeView:(GSSwipeView *)swipeView willMoveTopCell:(GSSwipeViewCell *)cell withActionType:(ActionType)type;
+
+
+
+
+
 @end
 
 @protocol GSSwipeViewDataSource <NSObject>

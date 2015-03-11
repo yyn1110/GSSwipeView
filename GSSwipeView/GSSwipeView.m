@@ -154,6 +154,8 @@
 		GSSwipeViewCell *cell = self.viewDataSource[i];
 		if (i>=processCount) {
 			cell.hidden = YES;
+		}else{
+			cell.hidden = NO;
 		}
 	}
 	
@@ -256,9 +258,9 @@
 //			CGAffineTransform transform = CGAffineTransformIdentity;
 			
 
-//			CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 1, 1);
+			CGAffineTransform scaleTransform = CGAffineTransformScale(transform, scale, scale);
 			
-			cell.transform = transform;
+			cell.transform = scaleTransform;
 
 			
 		}
@@ -301,6 +303,9 @@
 
 	
 	GSSwipeViewCell *topCell =self.viewDataSource.firstObject;
+	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:willMoveTopCell:withActionType:)]) {
+		[self.delegate GSSwipeView:self willMoveTopCell:topCell withActionType:ActionTypeHate];
+	}
 	CGAffineTransform transform = CGAffineTransformMakeRotation(-0.14);
 	CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 0.93, 0.93);
 	topCell.transform = scaleTransform;
@@ -321,6 +326,11 @@
 		
 	}
 	GSSwipeViewCell *topCell =self.viewDataSource.firstObject;
+	
+	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:willMoveTopCell:withActionType:)]) {
+		[self.delegate GSSwipeView:self willMoveTopCell:topCell withActionType:ActionTypeLike];
+	}
+	
 	CGAffineTransform transform = CGAffineTransformMakeRotation(0.14);
 	CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 0.93, 0.93);
 	topCell.transform = scaleTransform;

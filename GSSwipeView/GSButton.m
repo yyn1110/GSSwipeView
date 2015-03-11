@@ -26,44 +26,51 @@
 	self = [super initWithFrame:frame];
 	if (self) {
 		
-		self.backGroundImageView = [[UIImageView alloc] init];
-		self.backGroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
+		self.backGroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.backGroundImageView];
+		self.backGroundImageView.userInteractionEnabled = YES;
 		
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backGroundImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_backGroundImageView)]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backGroundImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_backGroundImageView)]];
 		
-		self.midImageView = [[UIImageView alloc] init];
-		self.midImageView.translatesAutoresizingMaskIntoConstraints = NO;
+		self.midImageView = [[UIImageView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.midImageView];
-		
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_midImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_midImageView)]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_midImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_midImageView)]];
+		self.midImageView.userInteractionEnabled = YES;
 		
 		
-		self.topImageView = [[UIImageView alloc] init];
-		self.topImageView.translatesAutoresizingMaskIntoConstraints = NO;
+		self.topImageView = [[UIImageView alloc] initWithFrame:self.midImageView.bounds];
 		[self.midImageView addSubview:self.topImageView];
+
+	
 		
-		[self.midImageView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_topImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_topImageView)]];
-		[self.midImageView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_topImageView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_topImageView)]];
-		
-		self.maskView = [[UIView alloc] init];
-		[self addSubview:self.maskView];
-		self.maskView.translatesAutoresizingMaskIntoConstraints = NO;
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_maskView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_maskView)]];
-		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_maskView]|" options:0 metrics:@{} views:NSDictionaryOfVariableBindings(_maskView)]];
-		self.maskView.userInteractionEnabled = YES;
+//		self.maskView = [[UIView alloc] initWithFrame:self.bounds];
+//		[self addSubview:self.maskView];
+//	
+//	
+//		self.maskView.userInteractionEnabled = YES;
 		self.backGroundImageView.image = backImg;
 		self.midImageView.image = midImg;
 		self.topImageView.image = topImage;
-		
-		UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maskViewTap:)];
-		longPress.minimumPressDuration = 0;
-		[self.maskView addGestureRecognizer:longPress];
+
+//		UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maskViewTap:)];
+//		longPress.minimumPressDuration = 0;
+//		[self.maskView addGestureRecognizer:longPress];
 
 	}
 	return self;
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+		[self touchBegan];
+}
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+{
+
+	UITouch *touch = [touches anyObject];
+	CGPoint nowPoint = [touch locationInView:self];
+	if (CGRectContainsPoint(self.bounds, nowPoint)) {
+		[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
+	}
+	[self touchEnd];
 }
 - (void)maskViewTap:(UILongPressGestureRecognizer *)longPress
 {
@@ -73,6 +80,7 @@
 	switch (longPress.state) {
 	  case UIGestureRecognizerStateBegan:
 		{
+			NSLog(@"UIGestureRecognizerStateBegan");
 			[self touchBegan];
 		}
 			break;
@@ -86,10 +94,10 @@
 		{
 			CGPoint nowPoint = [longPress locationInView:self];
 			if (CGRectContainsPoint(self.bounds, nowPoint)) {
-    [self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
+    		[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
 			}
 			
-			
+			NSLog(@"UIGestureRecognizerStateEnded");
 			
 			[self touchEnd];
 		}
@@ -100,6 +108,7 @@
 }
 - (void)touchEnd
 {
+	
 	[UIView animateWithDuration:0.1 animations:^{
 		CGAffineTransform transform = CGAffineTransformIdentity;
 		CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 1, 1);
@@ -109,6 +118,7 @@
 }
 - (void)touchBegan
 {
+
 	[UIView animateWithDuration:0.1 animations:^{
 		CGAffineTransform transform = CGAffineTransformIdentity;
 		CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 0.8, 0.8);
@@ -132,7 +142,6 @@
 }
 - (void)scaleTopImageNormal
 {
-	
 	[UIView animateWithDuration:0.1 animations:^{
 		CGAffineTransform transform = CGAffineTransformIdentity;
 		CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 1, 1);

@@ -12,9 +12,9 @@
 #import "GSButton.h"
 #define ACTION_MARGIN 120
 
+#define ACTION_PROCESS_DIS 20
 
-
-#define ACTION_MOVE_DISTANCE 500
+#define ACTION_MOVE_DISTANCE 300
 typedef NS_ENUM(NSInteger, SwipeDirectType) {
 	SwipeDirectTypeLeft,
 	SwipeDirectTypeRight,
@@ -66,8 +66,10 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @end
 @protocol GSSwipeViewDelegate <NSObject>
 @optional
-- (void)GSSwipeView:(GSSwipeView *)swipeView didSwipeEnd:(SwipeDirectType)swipeType;
-- (void)GSSwipeView:(GSSwipeView *)swipeView distanceProcess:(float)process withActionType:(ActionType)type;
+- (void)GSSwipeViewBeginSwipe:(GSSwipeView *)swipeView;
+- (void)GSSwipeViewEndSwipe:(GSSwipeView *)swipeView ;
+- (void)GSSwipeViewTouchEnd:(GSSwipeView *)swipeView ;
+- (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
 - (void)GSSwipeView:(GSSwipeView *)swipeView recoverOriginal:(GSSwipeViewCell *)cell withIndex:(NSInteger )index;
 @end
 

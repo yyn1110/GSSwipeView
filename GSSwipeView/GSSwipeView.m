@@ -15,6 +15,11 @@
 #define Card_BY_W 8.0
 #define Card_BY_H 4.0
 #define Card_Y_PADDING 13.0
+
+
+
+
+
 #import "GSSwipeView.h"
 @interface GSSwipeView ()
 @property (nonatomic,strong) NSMutableArray *viewDataSource;
@@ -67,29 +72,36 @@
 - (void)registerCellClass:(Class)aClass
 {
 	self.cellClass = aClass;
+	BOOL isSetSize = [self.dataSource respondsToSelector:@selector(cellSizeInSwipeView:)];
+	if (isSetSize) {
+	self.cellSize = [self.dataSource cellSizeInSwipeView:self];
+	}
+	[self.originalCenterCache removeAllObjects];
+	float w = CGRectGetWidth(self.bounds);
+	float h = CGRectGetHeight(self.bounds);
 	for (int i=0; i<ACTION_VIEW_CACHE_COUNT; i++) {
-		GSSwipeViewCell *cell = [[aClass alloc] init];
+		float cellW =self.cellSize.width-(ACTION_VIEW_CACHE_COUNT-i)*Card_BY_W;
+		float cellH =self.cellSize.height;
+		CGPoint center = CGPointMake(w/2, h/2-i*Card_BY_H+(ACTION_VIEW_CACHE_COUNT-1)*Card_BY_H);
+		GSSwipeViewCell *cell = [[aClass alloc] initWithFrame:CGRectMake(center.x-cellW/2, center.y-cellH/2, cellW, cellH)];
 
 		[self.viewDataSource insertObject:cell atIndex:0];
 		cell.clipsToBounds = YES;
-		if (self.cellColor) {
-			cell.backgroundColor = self.cellColor;
-
-		}else{
-			cell.backgroundColor = [UIColor whiteColor];
-		}
+		
+		cell.backgroundColor = [UIColor whiteColor];
 		cell.layer.cornerRadius = 5.f;
 		cell.layer.borderWidth = 1.f;
 		cell.layer.borderColor = [UIColor colorWithRed:220.f/255.0 green:220/255.0 blue:220/255.0 alpha:1.0].CGColor;
-//		cell.layer.shadowColor = [UIColor blackColor].CGColor;
-//		cell.layer.shadowOffset = CGSizeMake(3, 3);
-//		cell.layer.shadowOpacity = 0.8;
-//		cell.layer.shadowRadius = 3;
-		
-		
+
 		[self addSubview:cell];
+//		cell.center = self.center;
 		UIPanGestureRecognizer *pressGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
 		[cell addGestureRecognizer:pressGesture];
+		
+		NSLog(@"center %@  frame %@ w %f h %f",NSStringFromCGPoint(center),NSStringFromCGRect(cell.frame),w ,h );
+//		[self.originalCenterCache addObject:[NSValue valueWithCGRect:cell.frame]];
+		[self.originalCenterCache insertObject:[NSValue valueWithCGRect:cell.frame] atIndex:0];
+		
 	}
 
 	
@@ -112,7 +124,7 @@
 	self.cursor = 0;
 
 	NSInteger count = self.viewDataSource.count;
-	[self.originalCenterCache removeAllObjects];
+
 	self.cellSize = CGSizeZero;
 	BOOL isSetSize = [self.dataSource respondsToSelector:@selector(cellSizeInSwipeView:)];
 	BOOL isSetCount = [self.dataSource respondsToSelector:@selector(numberOfCellInSwipeView:)];
@@ -136,73 +148,24 @@
 		
 		
 	}
-	float w= CGRectGetWidth(self.frame);
-	float h = CGRectGetHeight(self.frame);
-	for (NSInteger i =0; i <count;i++ ) {
-		
-		GSSwipeViewCell *cell = self.viewDataSource[i];
-		
-
-		switch (i) {
-			case 0:
-			{
-				
-			cell.frame = CGRectMake(-w, -h/2 , self.cellSize.width-i*Card_BY_W, self.cellSize.height);
-			}
-				break;
-			case 1:
-			{
-
-				cell.frame = CGRectMake(w, -h/2 , self.cellSize.width-i*Card_BY_W, self.cellSize.height);
-			}break;
-			case 2:
-			{
-
-				cell.frame = CGRectMake(-w, h , self.cellSize.width-i*Card_BY_W, self.cellSize.height);
-			}break;
-			case 3:
-			{
-				cell.frame = CGRectMake(w, h , self.cellSize.width-i*Card_BY_W, self.cellSize.height);
-			}break;
-			case 4:
-			{
-				cell.frame = CGRectMake(w/2, -h , self.cellSize.width-i*Card_BY_W, self.cellSize.height);
-			}break;
-    break;
-				
-			default:
-    break;
-		}
-		
-		
-
-
-
 	
-	}
 	for (NSInteger i =0; i <count;i++ ) {
 		
 		GSSwipeViewCell *cell = self.viewDataSource[i];
-
-		CGPoint point = CGPointMake(self.center.x, CGRectGetHeight(self.frame)/2-(count - i)*Card_BY_H);
-		cell.hidden = NO;
-		float vw =cell.frame.size.width;
-		float vh = cell.frame.size.height;
-		[self.originalCenterCache addObject:[NSValue valueWithCGRect:CGRectMake(point.x-vw/2, point.y-vh/2+Card_Y_PADDING, vw, vh)]];
 		if (i>=processCount) {
 			cell.hidden = YES;
 		}
 	}
 	
-	[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
-		for (NSInteger i=0; i<self.originalCenterCache.count; i++) {
-			NSValue *value = self.originalCenterCache[i];
-			GSSwipeViewCell *cell = self.viewDataSource[i];
-			cell.frame =[value CGRectValue];
-		}
-	} completion:^(BOOL finished) {
-		
-	}];
+//	[UIView animateWithDuration:.25 delay:0 options:UIViewAnimationOptionCurveEaseOut animations:^{
+//		for (NSInteger i=0; i<self.originalCenterCache.count; i++) {
+//			NSValue *value = self.originalCenterCache[i];
+//			GSSwipeViewCell *cell = self.viewDataSource[i];
+//			cell.frame =[value CGRectValue];
+//		}
+//	} completion:^(BOOL finished) {
+//		
+//	}];
 	
 }
 
@@ -213,12 +176,14 @@
 		return;
 	}
 	CGPoint nowPoint = [longPress translationInView:self];
-	CGRect ScreenRect = [UIScreen mainScreen].bounds;
+
 	switch (longPress.state) {
  		 case UIGestureRecognizerStateBegan:
 		{
 
-			
+			if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewBeginSwipe:)]) {
+			    [self.delegate GSSwipeViewBeginSwipe:self];
+			}
 			
 			self.originalPoint = cell.center;
 
@@ -255,7 +220,7 @@
 			
 			
 			if (sca <=1) {
-				if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:distanceProcess:withActionType:)]) {
+				if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell: distanceProcess:withActionType:)]) {
 					float x = cell.center.x;
 					
 					if (self.style == SwipeViewStyleHorizontal) {
@@ -263,13 +228,13 @@
 					}else if (self.style == SwipeViewStyleVertical){
 						x =cell.center.y;
 					}
-					if (x >=ScreenRect.size.width/2+20) {
-						[self.delegate GSSwipeView:self distanceProcess:sca withActionType:ActionTypeLike];
-					}else if (x <ScreenRect.size.width/2-20){
-						[self.delegate GSSwipeView:self distanceProcess:sca withActionType:ActionTypeHate];
+					if (X >ACTION_PROCESS_DIS) {
+						[self.delegate GSSwipeView:self withCell:cell  distanceProcess:sca withActionType:ActionTypeLike];
+					}else if (X <-ACTION_PROCESS_DIS){
+						[self.delegate GSSwipeView:self withCell:cell  distanceProcess:sca withActionType:ActionTypeHate];
 					}else{
 					
-						[self.delegate GSSwipeView:self distanceProcess:0 withActionType:ActionTypeNone];
+						[self.delegate GSSwipeView:self withCell:cell  distanceProcess:0 withActionType:ActionTypeNone];
 					}
 					
 				}
@@ -288,11 +253,12 @@
 			
 
 			CGAffineTransform transform = CGAffineTransformMakeRotation(rotationAngel);
+//			CGAffineTransform transform = CGAffineTransformIdentity;
 			
 
-			CGAffineTransform scaleTransform = CGAffineTransformScale(transform, scale, scale);
+//			CGAffineTransform scaleTransform = CGAffineTransformScale(transform, 1, 1);
 			
-			cell.transform = scaleTransform;
+			cell.transform = transform;
 
 			
 		}
@@ -302,6 +268,10 @@
 
 			CGPoint nowPoint = [longPress translationInView:self];
 			[self afterSwipeAction:nowPoint withNowView:cell];
+			self.isAnimating = NO;
+			if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewTouchEnd:)]) {
+			    [self.delegate GSSwipeViewTouchEnd:self];
+			}
 			break;
 		};
 		case UIGestureRecognizerStatePossible:break;
@@ -376,6 +346,9 @@
 	} else {
 		if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:recoverOriginal:withIndex:)]) {
 			[self.delegate GSSwipeView:self recoverOriginal:cell withIndex:0];
+		}
+		if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
+			[self.delegate GSSwipeView:self withCell:cell  distanceProcess:0 withActionType:ActionTypeNone];
 		}
 		
 		[UIView animateKeyframesWithDuration:0.25 delay:0 options:0 animations:^{
@@ -474,9 +447,11 @@
 	}];
 	
 	self.isAnimating = NO;
-	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:didSwipeEnd:)]) {
-		
-		[self.delegate GSSwipeView:self didSwipeEnd:type];
+	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewEndSwipe:)]) {
+		[self.delegate GSSwipeViewEndSwipe:self];
+	}
+	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
+		[self.delegate GSSwipeView:self withCell:cell  distanceProcess:0 withActionType:ActionTypeNone];
 	}
 	
 }

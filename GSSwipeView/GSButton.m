@@ -41,37 +41,37 @@
 
 	
 		
-//		self.maskView = [[UIView alloc] initWithFrame:self.bounds];
-//		[self addSubview:self.maskView];
+		self.maskView = [[UIView alloc] initWithFrame:self.bounds];
+		[self addSubview:self.maskView];
+//
 //	
-//	
-//		self.maskView.userInteractionEnabled = YES;
+		self.maskView.userInteractionEnabled = YES;
 		self.backGroundImageView.image = backImg;
 		self.midImageView.image = midImg;
 		self.topImageView.image = topImage;
 
-//		UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maskViewTap:)];
-//		longPress.minimumPressDuration = 0;
-//		[self.maskView addGestureRecognizer:longPress];
+		UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maskViewTap:)];
+		longPress.minimumPressDuration = 0;
+		[self.maskView addGestureRecognizer:longPress];
 
 	}
 	return self;
 }
 
-- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
-{
-		[self touchBegan];
-}
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
-{
-
-	UITouch *touch = [touches anyObject];
-	CGPoint nowPoint = [touch locationInView:self];
-	if (CGRectContainsPoint(self.bounds, nowPoint)) {
-		[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
-	}
-	[self touchEnd];
-}
+//- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//		[self touchBegan];
+//}
+//- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+//{
+//
+//	UITouch *touch = [touches anyObject];
+//	CGPoint nowPoint = [touch locationInView:self];
+//	if (CGRectContainsPoint(self.bounds, nowPoint)) {
+//		[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
+//	}
+//	[self touchEnd];
+//}
 - (void)maskViewTap:(UILongPressGestureRecognizer *)longPress
 {
 	if (self.disable) {

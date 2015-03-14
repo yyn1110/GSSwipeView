@@ -14,7 +14,8 @@
 
 #define ACTION_PROCESS_DIS 20
 
-#define ACTION_MOVE_DISTANCE 300
+#define ACTION_MOVE_DISTANCE 12
+#define ACTION_MOVE_X_DISTANCE 300
 typedef NS_ENUM(NSInteger, SwipeDirectType) {
 	SwipeDirectTypeLeft,
 	SwipeDirectTypeRight,
@@ -53,42 +54,24 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @property (nonatomic,strong) UIColor *cellColor;
 
 - (void)reloadData;
-
-- (void)registerCellClass:(Class)aClass;
-
-- (void)beginUpdates;
-
-- (void)endUpdates;
-
 - (void)swipeLeftAction;
 - (void)swipeRightAction;
+
+
+- (void)registerCell:(NSString *)aClassName;
 
 @end
 @protocol GSSwipeViewDelegate <NSObject>
 @optional
 - (void)GSSwipeViewBeginSwipe:(GSSwipeView *)swipeView;
 - (void)GSSwipeViewEndSwipe:(GSSwipeView *)swipeView ;
-- (void)GSSwipeViewTouchEnd:(GSSwipeView *)swipeView ;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
-- (void)GSSwipeView:(GSSwipeView *)swipeView recoverOriginal:(GSSwipeViewCell *)cell withIndex:(NSInteger )index;
-- (void)GSSwipeView:(GSSwipeView *)swipeView willMoveTopCell:(GSSwipeViewCell *)cell withActionType:(ActionType)type;
-
-
-
-
 
 @end
 
 @protocol GSSwipeViewDataSource <NSObject>
 @required
-
 - (NSInteger)numberOfCellInSwipeView:(GSSwipeView *)swipeView;
-
-- (void)GSSwipeView:(GSSwipeView *)swipeView cellInSwipeView:(GSSwipeViewCell *)cell cellInSwipeViewIndex:(NSInteger )index;
-
-@optional
-
-
-- (CGSize)cellSizeInSwipeView:(GSSwipeView *)swipeView ;
-
+- (void)GSSwipeView:(GSSwipeView *)swipeView cellInSwipeView:(GSSwipeViewCell *)cell cellInSwipeViewIndex:(NSInteger)index;
+- (CGSize)cellSizeInSwipeView:(GSSwipeView *)swipeView;
 @end

@@ -24,11 +24,7 @@ typedef NS_ENUM(NSInteger, SwipeDirectType) {
 };
 
 
-typedef NS_ENUM(NSInteger,ActionType) {
-	ActionTypeNone,
-	ActionTypeHate,
-	ActionTypeLike,
-};
+
 
 typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 	SwipeViewStyleHorizontal,
@@ -51,6 +47,7 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @property (nonatomic,assign) float headerHeight;
 
 @property (nonatomic,assign,readonly) CGSize cellSize;
+
 @property (nonatomic,strong) UIColor *cellColor;
 
 - (void)reloadData;
@@ -64,7 +61,7 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @protocol GSSwipeViewDelegate <NSObject>
 @optional
 - (void)GSSwipeViewBeginSwipe:(GSSwipeView *)swipeView;
-- (void)GSSwipeViewEndSwipe:(GSSwipeView *)swipeView ;
+- (void)GSSwipeViewEndSwipe:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
 
 @end

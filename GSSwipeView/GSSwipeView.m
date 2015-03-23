@@ -179,14 +179,17 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 			if (sca<=1) {
 			    [self updateChildTransfrom:sca];
 				if (X <-Card_MOVE_DIS_X) {
+					cell.actionType =ActionTypeHate;
 					if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
 						[self.delegate GSSwipeView:self withCell:cell distanceProcess:sca withActionType:ActionTypeHate];
 					}
 				}else if (X  > Card_MOVE_DIS_X){
+					cell.actionType =ActionTypeLike;
 					if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
 						[self.delegate GSSwipeView:self withCell:cell distanceProcess:sca withActionType:ActionTypeLike];
 					}
 				}else{
+					cell.actionType =ActionTypeNone;
 					if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
 						[self.delegate GSSwipeView:self withCell:cell distanceProcess:sca withActionType:ActionTypeNone];
 					}
@@ -215,6 +218,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 {
 	if (self.cellCache.count >0) {
 		[self leftAction:CGPointMake(0, CGRectGetHeight(self.frame)/2) withNowView:self.cellCache.lastObject];
+		[self updateChildTransfrom:0];
 	}
 	
 }
@@ -222,6 +226,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 {
 	if (self.cellCache.count >0) {
 		[self rightAction:CGPointMake(0, CGRectGetHeight(self.frame)/2) withNowView:self.cellCache.lastObject];
+		[self updateChildTransfrom:0];
 	}
 }
 
@@ -292,7 +297,9 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 - (void)recoverView:(GSSwipeViewCell *)cell
 {
 	
-	
+	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewEndSwipe:withCell:)]) {
+		[self.delegate GSSwipeViewEndSwipe:self withCell:cell];
+	}
 	NSInteger numberOfData = [self.dataSource numberOfCellInSwipeView:self];
 	if (self.cellCache.count > numberOfData) {
 		[self.cellCache removeObject:cell];
@@ -313,17 +320,19 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		GSSwipeViewCell *lastCell = self.cellCache.lastObject;
 		[lastCell addGestureRecognizer:self.panGesture];
 	}
-	
-	for (NSInteger i = 0;i<self.cellCache.count;i++) {
+	NSInteger count = MIN(ACTION_VIEW_CACHE_COUNT, numberOfData);
+	for (NSInteger i = 0;i<count;i++) {
 		if (self.dataSource && [self.dataSource respondsToSelector:@selector(GSSwipeView:cellInSwipeView:cellInSwipeViewIndex:)]) {
 			[self.dataSource GSSwipeView:self cellInSwipeView:cell cellInSwipeViewIndex:i];
+		}
+		
+		if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:withCell:distanceProcess:withActionType:)]) {
+			[self.delegate GSSwipeView:self withCell:cell distanceProcess:0 withActionType:ActionTypeNone];
 		}
 	}
 	
 	
-	if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewEndSwipe:)]) {
-		[self.delegate GSSwipeViewEndSwipe:self];
-	}
+	
 
 }
 

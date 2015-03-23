@@ -7,6 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+typedef NS_ENUM(NSInteger,ActionType) {
+	ActionTypeNone,
+	ActionTypeHate,
+	ActionTypeLike,
+};
 @interface GSSwipeViewCell : UIView
-
+@property (nonatomic,assign,readwrite) ActionType actionType;
 @end

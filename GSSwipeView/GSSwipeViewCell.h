@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 typedef NS_ENUM(NSInteger,ActionType) {
-	ActionTypeNone,
-	ActionTypeHate,
-	ActionTypeLike,
+	ActionTypeNone=-1,
+	ActionTypeHate=0,
+	ActionTypeLike=1,
 };
-@interface GSSwipeViewCell : UIView
+@interface GSSwipeViewCell : UIView<UIDynamicItem>
 @property (nonatomic,assign,readwrite) ActionType actionType;
 @end

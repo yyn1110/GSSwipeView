@@ -10,7 +10,7 @@
 #import <CoreGraphics/CoreGraphics.h>
 
 #import "GSButton.h"
-#define ACTION_MARGIN 120
+#define ACTION_MARGIN 	[UIScreen mainScreen].bounds.size.width/4
 
 #define ACTION_PROCESS_DIS 20
 
@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 
 #import "GSSwipeViewCell.h"
 @interface GSSwipeView : UIView
-- (instancetype)initWithFrame:(CGRect)frame style:(SwipeViewStyle)style;
+- (instancetype)initWithFrame:(CGRect)frame style:(SwipeViewStyle)style withSuperView:(UIView *)superView;
 @property (nonatomic, readonly) SwipeViewStyle           style;
 @property (nonatomic,assign) id<GSSwipeViewDelegate> delegate;
 @property (nonatomic,assign) id<GSSwipeViewDataSource> dataSource;
@@ -55,15 +55,16 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 - (void)swipeRightAction;
 
 
-- (void)registerCell:(NSString *)aClassName;
+- (void)registerCell:(Class )aClass;
 
 @end
 @protocol GSSwipeViewDelegate <NSObject>
 @optional
-- (void)GSSwipeViewBeginSwipe:(GSSwipeView *)swipeView;
 - (void)GSSwipeViewEndSwipe:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
-
+- (void)GSSwipeView:(GSSwipeView *)swipeView withSelectCell:(GSSwipeViewCell *)cell;
+- (void)GSSwipeView:(GSSwipeView *)swipeView startLoadingWithCount:(NSInteger)dataCount;
+- (void)GSSwipeViewEndLoadingMoreData:(GSSwipeView *)swipeView;
 @end
 
 @protocol GSSwipeViewDataSource <NSObject>

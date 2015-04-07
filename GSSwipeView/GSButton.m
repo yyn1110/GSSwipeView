@@ -15,6 +15,9 @@
 
 @property (nonatomic,assign) id target;
 @property (nonatomic,assign) SEL action;
+
+@property (nonatomic,assign) NSTimeInterval lastClickTime;
+
 @end
 @implementation GSButton
 
@@ -28,21 +31,33 @@
 		
 		self.backGroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.backGroundImageView];
+		self.backGroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
 		self.backGroundImageView.userInteractionEnabled = YES;
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_backGroundImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_backGroundImageView)]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_backGroundImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_backGroundImageView)]];
 		
 		
 		self.midImageView = [[UIImageView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.midImageView];
+		_midImageView.translatesAutoresizingMaskIntoConstraints = NO;
 		self.midImageView.userInteractionEnabled = YES;
 		
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_midImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_midImageView)]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_midImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_midImageView)]];
 		
 		self.topImageView = [[UIImageView alloc] initWithFrame:self.midImageView.bounds];
 		[self.midImageView addSubview:self.topImageView];
-
-	
+		_topImageView.translatesAutoresizingMaskIntoConstraints = NO;
+		[self.midImageView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_topImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_topImageView)]];
+		[self.midImageView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_topImageView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_topImageView)]];
+		
 		
 		self.maskView = [[UIView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.maskView];
+		_maskView.translatesAutoresizingMaskIntoConstraints = NO;
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[_maskView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_maskView)]];
+		[self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[_maskView]|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(_maskView)]];
+		
 //
 //	
 		self.maskView.userInteractionEnabled = YES;
@@ -52,6 +67,7 @@
 
 		UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(maskViewTap:)];
 		longPress.minimumPressDuration = 0;
+		
 		[self.maskView addGestureRecognizer:longPress];
 
 	}
@@ -94,7 +110,16 @@
 		{
 			CGPoint nowPoint = [longPress locationInView:self];
 			if (CGRectContainsPoint(self.bounds, nowPoint)) {
-    		[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
+				
+				
+				
+				if (CACurrentMediaTime() -self.lastClickTime > 0.75) {
+					[self.target performSelectorOnMainThread:self.action withObject:self waitUntilDone:YES];
+					self.lastClickTime=CACurrentMediaTime();
+				}
+				
+				
+				
 			}
 			
 			NSLog(@"UIGestureRecognizerStateEnded");

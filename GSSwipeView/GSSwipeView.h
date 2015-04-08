@@ -64,19 +64,13 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @end
 @protocol GSSwipeViewDelegate <NSObject>
 @optional
-- (void)GSSwipeView:(GSSwipeView *)swipeView readyDonwLoadImg:(NSInteger)maxDownImgCount;
 - (void)GSSwipeViewWillEndSwipe:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell withActionType:(ActionType)type;
-- (void)GSSwipeViewDidEndSwipe:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withCell:(GSSwipeViewCell *)cell distanceProcess:(float)process withActionType:(ActionType)type;
 - (void)GSSwipeView:(GSSwipeView *)swipeView withSelectCell:(GSSwipeViewCell *)cell;
 - (void)GSSwipeView:(GSSwipeView *)swipeView startLoadingWithCount:(NSInteger)dataCount;
-- (void)GSSwipeViewEndLoadingMoreData:(GSSwipeView *)swipeView;
 
 - (void)GSSwipeViewTouchBegin:(GSSwipeView *)swipeView;
 - (void)GSSwipeViewTouchEnd:(GSSwipeView *)swipeView;
-
-
-
 @end
 
 @protocol GSSwipeViewDataSource <NSObject>
@@ -84,5 +78,4 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 - (NSInteger)numberOfCellInSwipeView:(GSSwipeView *)swipeView;
 - (void)GSSwipeView:(GSSwipeView *)swipeView cellInSwipeView:(GSSwipeViewCell *)cell cellInSwipeViewIndex:(NSInteger)index;
 - (CGSize)cellSizeInSwipeView:(GSSwipeView *)swipeView;
-- (BOOL)GSSwipeViewCheckHasData:(GSSwipeView *)swipeView;
 @end

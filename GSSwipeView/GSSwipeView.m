@@ -181,10 +181,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		
 		[self addSubview:cell];
 		
-//		if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeView:cellInSwipeView:cellInSwipeViewIndex:)]) {
-//			[self.delegate GSSwipeViewWillEndSwipe:self with]
-//		}
-		
+
 		
 		
 	}

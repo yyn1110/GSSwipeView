@@ -51,6 +51,7 @@ typedef NS_ENUM(NSInteger, SwipeViewStyle) {
 @property (nonatomic,assign) float headerHeight;
 
 @property (nonatomic,assign,readonly) CGSize cellSize;
+@property (nonatomic,assign) BOOL disable;
 
 @property (nonatomic,strong) UIColor *cellColor;
 

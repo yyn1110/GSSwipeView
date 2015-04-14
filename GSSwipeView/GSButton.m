@@ -12,7 +12,8 @@
 @property (nonatomic,strong) UIImageView *backGroundImageView;
 @property (nonatomic,strong) UIImageView *midImageView;
 @property (nonatomic,strong) UIImageView *topImageView;
-
+@property (nonatomic,strong) UIImage *disImage;
+@property (nonatomic,strong) UIImage *normalImage;
 @property (nonatomic,assign) id target;
 @property (nonatomic,assign) SEL action;
 
@@ -25,10 +26,12 @@
  withBackGroupImage:(UIImage *)backImg
 	   withMidImage:(UIImage *)midImg
 	   withTopImage:(UIImage *)topImage
+		withDisImage:(UIImage *)disImage
 {
 	self = [super initWithFrame:frame];
 	if (self) {
-		
+		self.disImage =disImage;
+		self.normalImage =topImage;
 		self.backGroundImageView = [[UIImageView alloc] initWithFrame:self.bounds];
 		[self addSubview:self.backGroundImageView];
 		self.backGroundImageView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -72,6 +75,16 @@
 
 	}
 	return self;
+}
+- (void)setDisable:(BOOL)disable
+{
+	_disable = disable;
+	if (disable) {
+		self.topImageView.image = self.disImage;
+		
+	}else{
+		self.topImageView.image = self.normalImage;
+	}
 }
 
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

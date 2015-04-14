@@ -13,7 +13,8 @@
 - (id)initWithFrame:(CGRect)frame
    withBackGroupImage:(UIImage *)backImg
 	   withMidImage:(UIImage *)midImg
-	   withTopImage:(UIImage *)topImage;
+	   withTopImage:(UIImage *)topImage
+	   withDisImage:(UIImage *)disImage;
 - (void)addTarget:(id)target action:(SEL)action ;
 - (void)scaleTopImage:(float)scale;
 - (void)scaleTopImageNormal;

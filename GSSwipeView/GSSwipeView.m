@@ -66,6 +66,9 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 @end
 
 @implementation GSSwipeView
+{
+    UIOffset offset;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame style:(SwipeViewStyle)style withSuperView:(UIView *)superView
 {
@@ -102,7 +105,9 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 
 - (void)tapGesture:(UITapGestureRecognizer *)tap
 {
-
+	if (self.disable) {
+		return;
+	}
 	GSSwipeViewCell *topCell = self.cellCache.lastObject;
 		CGPoint point = [tap locationInView:self];
 		if (CGRectContainsPoint(topCell.frame, point)) {
@@ -194,7 +199,17 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		}
 	}
 }
-
+- (void)setDisable:(BOOL)disable
+{
+	_disable = disable;
+	if (disable) {
+		[self removeGestureRecognizer:self.tapGesture];
+		[self removeGestureRecognizer:self.panGesture];
+	}else{
+		[self addGestureRecognizer:self.tapGesture];
+		[self addGestureRecognizer:self.panGesture];
+	}
+}
 - (void)hateButtonClick:(GSButton *)button
 {
 	[self swipeLeftAction];
@@ -203,6 +218,9 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 - (void)panGesture:(UIPanGestureRecognizer *)longPress
 {
 	
+	if (self.disable) {
+		return;
+	}
 	if (self.cellCache.count ==0)
     {
 		return;
@@ -227,7 +245,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		
 	
 
-		UIOffset offset = UIOffsetZero;
+		offset = UIOffsetZero;
 		if (CGRectContainsPoint(CGRectMake(0, 0, cell.frame.size.width, cell.frame.size.height/2), nowPoint))
         {
 			offset = UIOffsetMake(0, -10);
@@ -240,7 +258,8 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		self.viewBeginCenter = cell.center;
 		_draggingView = YES;
 		[self.animator removeAllBehaviors];
-		UIAttachmentBehavior *attachmentBehavior = [[UIAttachmentBehavior alloc] initWithItem:cell offsetFromCenter:offset attachedToAnchor:cell.center];
+		UIAttachmentBehavior *attachmentBehavior = [[UIAttachmentBehavior alloc] initWithItem:cell offsetFromCenter:offset attachedToAnchor:CGPointMake(cell.center.x, cell.center.y+offset.vertical)];
+        attachmentBehavior.damping = 0.0;
 		[self.animator addBehavior:attachmentBehavior];
 		self.attachmentBehavior = attachmentBehavior;
 		__weak GSSwipeView *weakSelf = self;
@@ -254,7 +273,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
     {
         NSLog(@"change");
 		float x2 =nowPoint.x - self.viewBeginPoint.x+self.viewBeginCenter.x;
-		float y2 = nowPoint.y - self.viewBeginPoint.y + self.viewBeginCenter.y;
+		float y2 = nowPoint.y - self.viewBeginPoint.y + self.viewBeginCenter.y+offset.vertical;
 		CGPoint center =CGPointMake(x2, y2);
 		[self.attachmentBehavior setAnchorPoint:center];
 		float X =nowPoint.x - self.viewBeginPoint.x;

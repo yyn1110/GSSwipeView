@@ -303,9 +303,9 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 				[self.delegate GSSwipeView:self withCell:cell distanceProcess:x_sca withActionType:ActionTypeNone];
 			}
 		}
-	}else if (longPress.state == UIGestureRecognizerStateEnded )
+	}else if (longPress.state == UIGestureRecognizerStateEnded || longPress.state == UIGestureRecognizerStateCancelled)
     {
-        NSLog(@"End");
+
 		
 		if (self.delegate && [self.delegate respondsToSelector:@selector(GSSwipeViewTouchEnd:)])
         {
@@ -326,8 +326,11 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		
 	
 	}else{
+		float x2 =nowPoint.x - self.viewBeginPoint.x+self.viewBeginCenter.x;
+		float y2 = nowPoint.y - self.viewBeginPoint.y + self.viewBeginCenter.y;
+
 		[self.animator removeAllBehaviors];
-		[self afterSwipeAction:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+		[self afterSwipeAction:CGPointMake(x2, y2)
 				   withNowCell:cell
 				   withDstance:1 needUpdate:NO];
 	}

@@ -10,6 +10,7 @@
 
 @interface GSButton : UIView
 @property (nonatomic,assign)BOOL disable;
+@property (nonatomic,assign)BOOL disableImgNoChange;
 - (id)initWithFrame:(CGRect)frame
    withBackGroupImage:(UIImage *)backImg
 	   withMidImage:(UIImage *)midImg

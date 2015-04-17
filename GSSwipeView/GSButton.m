@@ -86,7 +86,11 @@
 		self.topImageView.image = self.normalImage;
 	}
 }
-
+- (void)setDisableImgNoChange:(BOOL)disableImgNoChange
+{
+	_disableImgNoChange = disableImgNoChange;
+	
+}
 //- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 //{
 //		[self touchBegan];
@@ -103,9 +107,7 @@
 //}
 - (void)maskViewTap:(UILongPressGestureRecognizer *)longPress
 {
-	if (self.disable) {
-		return;
-	}
+	
 	switch (longPress.state) {
 	  case UIGestureRecognizerStateBegan:
 		{
@@ -121,7 +123,15 @@
 			break;
 		case UIGestureRecognizerStateEnded:
 		{
+			[self touchEnd];
 			CGPoint nowPoint = [longPress locationInView:self];
+			
+			if (self.disable) {
+				return;
+			}
+			if (self.disableImgNoChange) {
+				return;
+			}
 			if (CGRectContainsPoint(self.bounds, nowPoint)) {
 				
 				
@@ -137,7 +147,7 @@
 			
 			NSLog(@"UIGestureRecognizerStateEnded");
 			
-			[self touchEnd];
+
 		}
 			break;
   default:

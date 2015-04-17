@@ -172,6 +172,7 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 		if (minCount >2) {
 			idx = MIN(idx,2);
 		}
+		idx =(minCount==1)?idx=0:idx;
 		int m = (int)(idx * Card_Y_PADDING);
 		
 		cell.frame = CGRectMake(0, 0, self.cellSize.width, self.cellSize.height);
@@ -525,9 +526,14 @@ static const float MAX_XSCALE_PERCENT = 5.0;
 	
 	
 	int count  =self.cellCache.count;
-	for (int i=1; i<count-1; i++) {
+	
+	int j =1;
+	j = (count >1)?1:0;
+	
+	for (int i=j; i<count-j; i++) {
 		GSSwipeViewCell *cell = self.cellCache[i];
 		int idx =count-i-1;
+//		idx =(count==1)?idx=0:idx;
 		NSValue *value = self.beginPoints[i];
 		cell.transform = CGAffineTransformScale(CGAffineTransformIdentity, [self getScaleFactor:idx withDistance:distance], 1);
 		cell.center = CGPointMake(cell.center.x, [value CGPointValue].y+[self transY:distance]);
